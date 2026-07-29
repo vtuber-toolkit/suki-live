@@ -48,6 +48,7 @@ body.has-body-bg {
   --border: rgba(217, 225, 234, 0.78);
   --shadow: 0 14px 30px rgba(39, 49, 61, 0.12);
   background-image: var(--body-bg, none);
+  background-size: var(--body-bg-size, cover);
 }
 
 .header {
