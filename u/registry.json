@@ -636,6 +636,13 @@
       "tagline": "小羊治愈歌单-爱唱歌的小羊神",
       "registered_at": "2026-08-09",
       "status": "active"
+    },
+    {
+      "id": "koki",
+      "name": "光汐koki",
+      "tagline": "歌单整理中",
+      "registered_at": "2026-07-29",
+      "status": "active"
     }
   ]
 }

@@ -30,9 +30,10 @@
       return [...order.filter((value) => values.includes(value)), ...extras];
     };
 
-    const languages = sortByOrder([...new Set(items.map((song) => song.language).filter(Boolean))], languageOrder);
-    const genres = sortByOrder([...new Set(items.map((song) => song.genre).filter(Boolean))], genreOrder);
-    const accessValues = sortByOrder([...new Set(items.map((song) => utils.getPrimaryAccess(song.access)).filter(Boolean))], accessOrder);
+    const getTags = (value) => utils.normalizeTagValues(value);
+    const languages = sortByOrder([...new Set(items.flatMap((song) => getTags(song.language)))], languageOrder);
+    const genres = sortByOrder([...new Set(items.flatMap((song) => getTags(song.genre)))], genreOrder);
+    const accessValues = sortByOrder([...new Set(items.flatMap((song) => getTags(song.access)))], accessOrder);
 
     const fillSelect = (select, emptyLabel, values) => {
       const currentValue = select.value;
@@ -66,20 +67,40 @@
     const filterLang = document.getElementById("filter-language")?.value || "";
     const filterGenre = document.getElementById("filter-genre")?.value || "";
     const filterAccess = document.getElementById("filter-access")?.value || "";
+    const hasTag = (value, tag) => !tag || utils.normalizeTagValues(value).includes(tag);
+    const searchableTags = (value) => utils.normalizeTagValues(value).join(" ").toLowerCase();
 
     return items.filter((song) => {
       const matchSearch =
         !searchText ||
         song.title?.toLowerCase().includes(searchText) ||
         song.artist?.toLowerCase().includes(searchText) ||
-        song.genre?.toLowerCase().includes(searchText) ||
-        song.language?.toLowerCase().includes(searchText) ||
+        searchableTags(song.genre).includes(searchText) ||
+        searchableTags(song.language).includes(searchText) ||
         (song.note && song.note.toLowerCase().includes(searchText));
-      const matchLang = !filterLang || song.language === filterLang;
-      const matchGenre = !filterGenre || song.genre === filterGenre;
-      const matchAccess = !filterAccess || (song.access && song.access.includes(filterAccess));
+      const matchLang = hasTag(song.language, filterLang);
+      const matchGenre = hasTag(song.genre, filterGenre);
+      const matchAccess = hasTag(song.access, filterAccess);
       return matchSearch && matchLang && matchGenre && matchAccess;
     });
+  }
+
+  function renderAccessTags(accessValue, className = "access-tag") {
+    return utils
+      .normalizeTagValues(accessValue)
+      .map((access) => `<span class="${className} access-${utils.escapeHtml(access)}">${utils.escapeHtml(access)}</span>`)
+      .join("");
+  }
+
+  function renderTagText(value) {
+    return utils.normalizeTagValues(value).join(" · ");
+  }
+
+  function renderCategoryTags(value, category) {
+    return utils
+      .normalizeTagValues(value)
+      .map((tag) => `<span class="song-tag song-tag-${category}">${utils.escapeHtml(tag)}</span>`)
+      .join("");
   }
 
   function renderPlaylist(items, viewMode) {
@@ -91,18 +112,14 @@
           const cover = song.cover
             ? `<img class="song-cover" src="${song.cover}" alt="${utils.escapeHtml(song.title)}" onerror="this.style.display='none'" />`
             : "";
-          const access = song.access
-            ? `<span class="access-tag access-${utils.escapeHtml(utils.getPrimaryAccess(song.access))}">${utils.escapeHtml(song.access)}</span>`
-            : "";
+          const access = renderAccessTags(song.access);
           const songNote = song.note ? `<div class="song-note">${utils.escapeHtml(song.note)}</div>` : "";
           const songLink = song.url
             ? `<a class="song-link" href="${utils.escapeHtml(song.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">播放</a>`
             : "";
           const meta = `${utils.escapeHtml(song.artist || "")}${song.artist && song.source ? " · " : ""}${utils.escapeHtml(song.source || "")}`;
-          const langGenre =
-            song.language || song.genre
-              ? `<br/>${utils.escapeHtml(song.language || "")}${song.language && song.genre ? " · " : ""}${utils.escapeHtml(song.genre || "")}`
-              : "";
+          const categoryTags = `${renderCategoryTags(song.language, "language")}${renderCategoryTags(song.genre, "genre")}`;
+          const langGenre = categoryTags ? `<div class="song-tags">${categoryTags}</div>` : "";
 
           return `
             <li data-song-title="${utils.escapeHtml(song.title)}" title="点击复制「点歌 ${utils.escapeHtml(song.title)}」">
@@ -129,19 +146,15 @@
         const cover = song.cover
           ? `<img class="song-cover" src="${song.cover}" alt="${utils.escapeHtml(song.title)}" onerror="this.style.display='none'" />`
           : "";
-        const access = song.access
-          ? `<span class="access-tag access-${utils.escapeHtml(utils.getPrimaryAccess(song.access))}">${utils.escapeHtml(song.access)}</span>`
-          : "";
+        const access = renderAccessTags(song.access);
         const songNote = song.note ? `<div class="song-note">${utils.escapeHtml(song.note)}</div>` : "";
         const songLink = song.url
           ? `<a class="song-link" href="${utils.escapeHtml(song.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">播放</a>`
           : "";
         const meta = `${utils.escapeHtml(song.artist || "")}${song.artist && song.source ? " · " : ""}${utils.escapeHtml(song.source || "")}`;
         const addedAt = song.added_at ? ` · 添加于 ${song.added_at}` : "";
-        const langGenre =
-          song.language || song.genre
-            ? `<br/>${utils.escapeHtml(song.language || "")}${song.language && song.genre ? " · " : ""}${utils.escapeHtml(song.genre || "")}`
-            : "";
+        const categoryTags = `${renderCategoryTags(song.language, "language")}${renderCategoryTags(song.genre, "genre")}`;
+        const langGenre = categoryTags ? `<div class="song-tags">${categoryTags}</div>` : "";
 
         return `
           <li data-song-title="${utils.escapeHtml(song.title)}" title="点击复制「点歌 ${utils.escapeHtml(song.title)}」">
@@ -279,13 +292,13 @@
     document.getElementById("modal-song-artist").textContent = state.currentRandomSong.artist ? `${state.currentRandomSong.artist}` : "";
 
     const metaParts = [];
-    if (state.currentRandomSong.language) metaParts.push(state.currentRandomSong.language);
-    if (state.currentRandomSong.genre) metaParts.push(state.currentRandomSong.genre);
+    if (state.currentRandomSong.language) metaParts.push(renderTagText(state.currentRandomSong.language));
+    if (state.currentRandomSong.genre) metaParts.push(renderTagText(state.currentRandomSong.genre));
     document.getElementById("modal-song-meta").textContent = metaParts.join("  |  ");
 
     const accessEl = document.getElementById("modal-song-access");
     if (state.currentRandomSong.access) {
-      accessEl.innerHTML = `<span class="modal-access-tag access-${utils.escapeHtml(utils.getPrimaryAccess(state.currentRandomSong.access))}">${utils.escapeHtml(state.currentRandomSong.access)}</span>`;
+      accessEl.innerHTML = renderAccessTags(state.currentRandomSong.access, "modal-access-tag");
     } else {
       accessEl.textContent = "";
     }

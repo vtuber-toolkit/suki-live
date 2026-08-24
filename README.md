@@ -203,9 +203,9 @@ Fields for each item:
 | `title` | string | yes | Song title |
 | `artist` | string | no | Artist or original performer |
 | `source` | string | no | Platform or source |
-| `language` | string | no | Language label |
-| `genre` | string | no | Genre label |
-| `access` | string | no | Access rule such as `免费` or `歌切` |
+| `language` | string or string[] | no | One or more language labels; single-string values remain supported |
+| `genre` | string or string[] | no | One or more genre labels; single-string values remain supported |
+| `access` | string or string[] | no | One or more access tags such as `免费` or `歌切`; single-string values remain supported |
 | `url` | string | no | Playback link |
 | `cover` | string | no | Cover image URL |
 | `note` | string | no | Free-form note |

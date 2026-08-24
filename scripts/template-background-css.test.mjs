@@ -21,3 +21,13 @@ test("body.has-body-bg overrides the default gradient stack with the actual back
     "body.has-body-bg should replace the default layered gradient with the selected body background image"
   );
 });
+
+test("body.has-body-bg sizes its single background image to cover the viewport", () => {
+  const block = getBlock("body.has-body-bg");
+
+  assert.match(
+    block,
+    /background-size:\s*var\(--body-bg-size,\s*cover\);/,
+    "body.has-body-bg should not inherit the default two-layer size list, whose first auto value leaves a single image at its intrinsic size"
+  );
+});
