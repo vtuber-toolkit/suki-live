@@ -525,6 +525,36 @@ body.has-body-bg .playlist.list-view li {
   font-size: 0.85rem;
 }
 
+.song-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.35rem;
+}
+
+.song-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.4rem;
+  padding: 0.08rem 0.42rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+.song-tag-language {
+  background: #dff4ff;
+  border-color: rgba(84, 136, 171, 0.25);
+  color: #5488ab;
+}
+
+.song-tag-genre {
+  background: #ffe3ee;
+  border-color: rgba(176, 110, 141, 0.24);
+  color: #b06e8d;
+}
+
 .song-note {
   font-size: 0.8rem;
   color: var(--text-light);

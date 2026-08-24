@@ -622,6 +622,13 @@
       "tagline": "请耐心等待...这也是修行的一环！",
       "registered_at": "2026-07-12",
       "status": "active"
+    },
+    {
+      "id": "koki",
+      "name": "光汐koki",
+      "tagline": "歌单整理中",
+      "registered_at": "2026-07-29",
+      "status": "active"
     }
   ]
 }

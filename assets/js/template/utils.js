@@ -97,9 +97,18 @@
     return templateEl.innerHTML;
   }
 
-  function getPrimaryAccess(accessStr) {
-    if (!accessStr) return "";
-    return accessStr.split("/")[0].trim();
+  function normalizeTagValues(value) {
+    const rawValues = Array.isArray(value) ? value : [value];
+    const tags = rawValues
+      .flatMap((item) => String(item || "").split("/"))
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    return [...new Set(tags)];
+  }
+
+  function getPrimaryAccess(accessValue) {
+    return normalizeTagValues(accessValue)[0] || "";
   }
 
   function getVtuberId() {
@@ -114,6 +123,7 @@
 
   template.utils = {
     escapeHtml,
+    normalizeTagValues,
     sanitizeRenderedHtml,
     getPrimaryAccess,
     getApexOrigin,
