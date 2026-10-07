@@ -629,6 +629,13 @@
       "tagline": "歌单整理中",
       "registered_at": "2026-07-29",
       "status": "active"
+    },
+    {
+      "id": "mddk",
+      "name": "明灯盏盏zzz",
+      "tagline": "花灯小铺的歌单",
+      "registered_at": "2026-10-07",
+      "status": "active"
     }
   ]
 }
