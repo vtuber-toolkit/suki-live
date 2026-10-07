@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>花灯小铺的歌单</title>
+    <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48 64x64 128x128 256x256" type="image/x-icon" />
+    <!-- 预加载 -->
+    <link rel="preload" as="image" href="校服盏.webp" />
+    <link rel="preload" as="image" href="头像.webp" />
+    <link rel="preload" as="image" href="加载图.webp" />
+    <!-- 样式表统一放在外部 -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <!-- ===== 加载遮罩 ===== -->
+    <div id="loader-overlay">
+        <div class="loader-bubble">
+            <img id="loaderImg" class="loader-img" src="加载图.webp" alt="加载中" />
+            <div class="loader-spinner"></div>
+            <div class="loader-welcome">
+                欢迎客官光临<br />
+                <span class="highlight">花灯小铺</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 主页面 ===== -->
+    <div class="app">
+        <!-- 板二 -->
+        <aside class="glass sidebar">
+            <div class="inner-bubble">
+                <div class="profile">
+                    <a href="https://live.bilibili.com/1909461042" target="_blank" class="avatar-link">
+                        <img src="头像.webp" alt="头像" class="avatar-img" />
+                        <span class="ripple"></span>
+                        <span class="ripple"></span>
+                        <span class="ripple"></span>
+                        <span class="ripple"></span>
+                    </a>
+                    <div class="profile-name">明灯盏盏zzz的歌单</div>
+                </div>
+
+                <div class="action-row">
+                    <button class="btn btn-primary" id="randomBtn">随机一首</button>
+                    <button class="btn btn-primary" id="ancientBtn">古风盲盒</button>
+                    <button class="btn btn-primary" id="popBtn">流行盲盒</button>
+                </div>
+
+                <input class="search-box" id="searchInput" type="search" placeholder="搜索歌曲/歌手" />
+
+                <div class="filters" id="filterContainer"></div>
+
+                <div class="count-wrapper">
+                    <div class="count" id="countDisplay">共 0 首歌曲</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 板三 -->
+        <main class="glass main-card">
+            <div class="list-header">
+                <span>歌名</span>
+                <span>歌手</span>
+                <span>语言</span>
+                <span>风格</span>
+                <span>SC</span>
+                <span>备注</span>
+            </div>
+            <div class="scroll-area" id="scrollArea">
+                <div class="song-list" id="songList"></div>
+            </div>
+
+            <div class="bottom-footer"></div>
+        </main>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <span>© 2026 — Designed By 牧野风聆 For 明灯盏盏zzz | Last Updated: <span id="updateTime">2026-10-07</span></span>
+    </footer>
+
+    <!-- Toast 药丸气泡 -->
+    <div id="toast" class="toast">已复制歌曲名</div>
+
+    <!-- ===== 脚本 ===== -->
+    <script src="script.js"></script>
+    <script>
+        (function() {
+            const overlay = document.getElementById('loader-overlay');
+            const startTime = Date.now();
+            const MIN_DISPLAY = 600;
+
+            function hideLoader() {
+                if (overlay.classList.contains('fade-out')) return;
+                overlay.classList.add('fade-out');
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 800);
+            }
+
+            window.addEventListener('load', function() {
+                const elapsed = Date.now() - startTime;
+                const remaining = MIN_DISPLAY - elapsed;
+                if (remaining > 0) {
+                    setTimeout(hideLoader, remaining);
+                } else {
+                    hideLoader();
+                }
+            });
+
+            setTimeout(function() {
+                if (!overlay.classList.contains('fade-out')) {
+                    hideLoader();
+                }
+            }, 6000);
+        })();
+    </script>
+
+</body>
+</html>
